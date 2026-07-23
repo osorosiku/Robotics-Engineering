@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Motor ライブラリの使い方</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f3ea;
+      --panel: #fffaf0;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #1f6feb;
+      --accent-2: #0f766e;
+      --border: #e5dcc7;
+      --code-bg: #0b1020;
+      --code-text: #e5eefc;
+      --shadow: 0 18px 45px rgba(31, 41, 55, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Yu Gothic UI", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(31, 111, 235, 0.12), transparent 32%),
+        radial-gradient(circle at top right, rgba(15, 118, 110, 0.12), transparent 28%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .wrap {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 40px 20px 56px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #ffffff, #fff8ea);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(31, 111, 235, 0.1);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+    }
+
+    h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.15;
+    }
+
+    .lead {
+      margin: 0;
+      color: var(--muted);
+      max-width: 70ch;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .card {
+      grid-column: span 12;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 10px 28px rgba(31, 41, 55, 0.06);
+    }
+
+    @media (min-width: 900px) {
+      .half {
+        grid-column: span 6;
+      }
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 1.35rem;
+    }
+
+    h3 {
+      margin: 18px 0 10px;
+      font-size: 1.02rem;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 1.2rem;
+    }
+
+    li+li {
+      margin-top: 6px;
+    }
+
+    code,
+    pre {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.95rem;
+    }
+
+    pre {
+      margin: 14px 0 0;
+      padding: 18px;
+      overflow-x: auto;
+      border-radius: 16px;
+      background: var(--code-bg);
+      color: var(--code-text);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .note {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-left: 4px solid var(--accent-2);
+      background: rgba(15, 118, 110, 0.08);
+      color: #134e4a;
+      border-radius: 12px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      overflow: hidden;
+      border-radius: 16px;
+    }
+
+    .table th,
+    .table td {
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      padding: 12px 10px;
+      vertical-align: top;
+    }
+
+    .table th {
+      background: rgba(31, 111, 235, 0.08);
+      color: #0f172a;
+    }
+
+    .footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <span class="badge">gpiozero / Motor</span>
+      <h1>Motor ライブラリの使い方</h1>
+      <p class="lead">
+        このページは、現在の <code>motor.py</code> に合わせて、Python の <code>gpiozero.Motor</code> の基本的な使い方、配線の考え方、実行例をまとめたものです。
+      </p>
+    </section>
+
+    <section class="grid">
+      <article class="card half">
+        <h2>1. 何をするライブラリか</h2>
+        <p>
+          <code>gpiozero.Motor</code> は、2本の GPIO ピンを使って DC モーターの正転・逆転・停止を扱うためのクラスです。
+          <code>forward</code> と <code>backward</code> の2つのピンを与えることで、Hブリッジなどのモータードライバ経由で制御します。
+        </p>
+        <ul>
+          <li><code>forward()</code> で正転</li>
+          <li><code>backward()</code> で逆転</li>
+          <li><code>stop()</code> で停止</li>
+        </ul>
+      </article>
+
+      <article class="card half">
+        <h2>2. 現在の配線設定</h2>
+        <p>今の <code>motor.py</code> では、4台のモーターをそれぞれ別の GPIO に割り当てています。</p>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>モーター</th>
+              <th>forward</th>
+              <th>backward</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>motor1</td>
+              <td>18</td>
+              <td>23</td>
+            </tr>
+            <tr>
+              <td>motor2</td>
+              <td>27</td>
+              <td>22</td>
+            </tr>
+            <tr>
+              <td>motor3</td>
+              <td>17</td>
+              <td>24</td>
+            </tr>
+            <tr>
+              <td>motor4</td>
+              <td>25</td>
+              <td>8</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="note">
+          注意: 実機では GPIO の重複利用や busy 状態があると初期化で失敗します。配線と他プロセスの使用状況を確認してください。
+        </div>
+      </article>
+
+      <article class="card half">
+        <h2>3. 基本的な書き方</h2>
+        <p>1台だけ動かす最小例は次の通りです。</p>
+        <pre><code>from gpiozero import Motor
+
+motor = Motor(forward=17, backward=18)
+
+motor.forward(1)
+# motor.backward(1)
+# motor.stop()</code></pre>
+      </article>
+
+      <article class="card half">
+        <h2>4. 現在の <code>motor.py</code> の動き</h2>
+        <p>
+          スクリプトは起動後に4台のモーターをすべて <code>forward(1)</code> で回し続けます。
+          <code>while True</code> の無限ループなので、止めるには <kbd>Ctrl</kbd> + <kbd>C</kbd> を使います。
+        </p>
+        <pre><code>while True:
+    motor1.forward(1)
+    motor2.forward(1)
+    motor3.forward(1)
+    motor4.forward(1)</code></pre>
+      </article>
+
+      <article class="card half">
+        <h2>5. 実行前の準備</h2>
+        <ul>
+          <li><code>gpiozero</code> がインストールされていること</li>
+          <li>Raspberry Pi など GPIO を扱える環境であること</li>
+          <li>モータードライバと GPIO の配線が正しいこと</li>
+          <li>同じ GPIO を他のプログラムが使っていないこと</li>
+        </ul>
+      </article>
+
+      <article class="card half">
+        <h2>6. よく使う操作</h2>
+        <ul>
+          <li><code>motor.forward(1)</code>: 正転。値は速さの目安です。</li>
+          <li><code>motor.backward(1)</code>: 逆転。</li>
+          <li><code>motor.stop()</code>: 停止。</li>
+          <li><code>pause()</code>: シグナル待ちでプロセスを生かすときに使います。</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>7. メモ</h2>
+        <p>
+          このリポジトリの現状では、<code>hoge.py</code> も <code>gpiozero.Motor</code> を使う同系統のサンプルです。
+          まずは1台だけで動作確認し、その後に4台構成へ広げると切り分けしやすくなります。
+        </p>
+        <div class="footer">作成場所: <code>dock/index.html</code></div>
+      </article>
+    </section>
+  </main>
+</body>
+
+</html>
