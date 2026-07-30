@@ -89,15 +89,7 @@ while True:
    turn = joystick.get_axis(0)
 
    # 入力によっての動作管理
-   if around <= -0.5 and turn <= -0.5:
-      left_forward()
-   elif around <= -0.5 and turn >= 0.5:
-      right_forward()
-   elif around >= 0.5 and turn <= -0.5:
-      left_backward()
-   elif around >= 0.5 and turn >= 0.5:
-      right_backward()
-   elif around <= -0.5:
+   if around <= -0.5:
       forward()
    elif around >= 0.5:
       backward()
@@ -105,8 +97,14 @@ while True:
       left()
    elif turn >= 0.5:
       right()
-   
-      
+   elif around <= -0.2 and turn <= -0.2:
+      left_forward()
+   elif around <= -0.2 and turn >= 0.2:
+      right_forward()
+   elif around >= 0.2 and turn <= -0.2:
+      left_backward()
+   elif around >= 0.2 and turn >= 0.2:
+      right_backward()   
    else:
       stop()
    # CPU使用率を抑えるために短い待機を入れる(負荷対策であった方が良いらしい)
