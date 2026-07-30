@@ -42,6 +42,34 @@ def backward():
    motor3.backward(1)
    motor4.backward(1)
 
+def left():
+   motor1.forward(1)
+   motor2.backward(1)
+   motor3.backward(1)
+   motor4.forward(1)
+
+def right():
+   motor1.backward(1)
+   motor2.forward(1)
+   motor3.forward(1)
+   motor4.backward(1)
+
+def left_forward():
+   motor1.forward(1)
+   motor4.forward(1)
+
+def right_forward():
+   motor2.forward(1)
+   motor3.forward(1)
+
+def left_backward():
+   motor1.backward(1)
+   motor4.backward(1)
+
+def right_backward():
+   motor2.backward(1)
+   motor3.backward(1)
+
 def stop():
    motor1.stop()
    motor2.stop()
@@ -56,13 +84,27 @@ while True:
    
    # 入力確認
    pygame.event.pump()
+   
    around = joystick.get_axis(1)
+   turn = joystick.get_axis(0)
 
    # 入力によっての動作管理
    if around <= -0.5:
       forward()
    elif around >= 0.5:
       backward()
+   elif turn <= -0.5:
+      left()
+   elif turn >= 0.5:
+      right()
+   elif around <= -0.5 and turn <= -0.5:
+      left_forward()
+   elif around <= -0.5 and turn >= 0.5:
+      right_forward()
+   elif around >= 0.5 and turn <= -0.5:
+      left_backward()
+   elif around >= 0.5 and turn >= 0.5:
+      right_backward()
    else:
       stop()
    # CPU使用率を抑えるために短い待機を入れる(負荷対策であった方が良いらしい)
