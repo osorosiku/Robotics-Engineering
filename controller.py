@@ -67,16 +67,16 @@ def right_forward():
    motor4.forward(1)
 
 def left_backward():
-   motor1.backward(1)
-   motor2.stop()
-   motor3.backward(1)
-   motor4.stop()
-
-def right_backward():
    motor1.stop()
    motor2.backward(1)
    motor3.stop()
    motor4.backward(1)
+
+def right_backward():
+   motor1.backward(1)
+   motor2.stop()
+   motor3.backward(1)
+   motor4.stop()
 
 def stop():
    motor1.stop()
